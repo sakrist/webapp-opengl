@@ -10,4 +10,16 @@ fi
 if [ ! -f Bundle/index.js ]; then
   cp .build/checkouts/JavaScriptKit/Sources/JavaScriptKit/Runtime/index.js Bundle/index.js
 fi
-cp .build/release/EmbeddedApp.wasm Bundle/app.wasm
+
+if [ -f Bundle/app.wasm ]; then
+  rm Bundle/app.wasm
+fi
+
+if ! command -v wasm-opt &> /dev/null; then
+  cp .build/release/EmbeddedApp.wasm Bundle/app.wasm
+else
+  wasm-opt -O3 .build/release/EmbeddedApp.wasm -o Bundle/app.wasm
+fi
+
+# wasm-opt -O3 .build/release/EmbeddedApp.wasm -o Bundle/app.wasm
+
