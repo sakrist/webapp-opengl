@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:webapp}",
+            "name": "Debug EmbeddedApp",
+            "program": "${workspaceFolder:webapp}/.build/debug/EmbeddedApp",
+            "preLaunchTask": "swift: Build Debug EmbeddedApp"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:webapp}",
+            "name": "Release EmbeddedApp",
+            "program": "${workspaceFolder:webapp}/.build/release/EmbeddedApp",
+            "preLaunchTask": "swift: Build Release EmbeddedApp"
+        }
+    ]
+    
+}
