@@ -1,7 +1,10 @@
 #!/bin/bash
 
+
+export SWIFT_TOOLCHAIN=/Library/Developer/Toolchains/swift-6.1-DEVELOPMENT-SNAPSHOT-2025-02-21-a.xctoolchain
+
 export JAVASCRIPTKIT_EXPERIMENTAL_EMBEDDED_WASM=true 
-/Library/Developer/Toolchains/swift-6.1-DEVELOPMENT-SNAPSHOT-2025-02-21-a.xctoolchain/usr/bin/swift build -c release --product EmbeddedApp \
+$SWIFT_TOOLCHAIN/usr/bin/swift build -c release --product EmbeddedApp \
   --triple wasm32-unknown-none-wasm 
 
 if [ ! -f Bundle/index.mjs ]; then
