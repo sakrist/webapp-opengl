@@ -2,16 +2,26 @@ import JavaScriptKit
 
 
 func main() {
+    
     guard
-    case .object(let div) = JSObject.global.document.createElement("div")
+    case .object(let canvas) = JSObject.global.document.createElement("canvas")
     else
     {
         print("Could not create elements")
         fatalError("Could not create elements")
     }
+    _ = JSObject.global.document.body.appendChild(canvas)
 
-    div.innerHTML = .string("Hello there!")
+    if var gl = canvas.getContext?("webgl") {
+        print("WebGL is supported")
+        canvas.width = 800
+        canvas.height = 600
+        gl.viewport(0, 0, 800, 600);
+        gl.clearColor(1.0, 0.0, 0.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
-    _ = JSObject.global.document.body.appendChild(div)
+    } else {
+        print("WebGL is not supported")
+    }
 }
 main()
