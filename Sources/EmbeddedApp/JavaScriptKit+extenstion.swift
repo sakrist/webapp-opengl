@@ -11,3 +11,4 @@ extension String {
         utf8.elementsEqual(other.utf8)
     }
 }
+

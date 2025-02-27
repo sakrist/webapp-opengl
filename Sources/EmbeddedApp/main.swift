@@ -1,8 +1,8 @@
 import JavaScriptKit
-
+import emsdk
 
 func main() {
-    
+
     guard
     case .object(let canvas) = JSObject.global.document.createElement("canvas")
     else
@@ -23,5 +23,10 @@ func main() {
     } else {
         print("WebGL is not supported")
     }
+
+
+    let number = sqrt(4);
+    print("sqrt(4) = \(number)")
+
 }
 main()

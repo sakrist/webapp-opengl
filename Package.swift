@@ -14,12 +14,15 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/swiftwasm/swift-dlmalloc", from: "0.1.0"),
         .package(url: "https://github.com/swiftwasm/JavaScriptKit", branch: "main"),
+        .package(path: "../swift_emsdk")
     ],
     targets: [
         .executableTarget(
             name: "EmbeddedApp",
             dependencies: [
                 .product(name: "JavaScriptKit", package: "JavaScriptKit"),
+                .product(name: "emsdk", package: "swift_emsdk"), 
+                "missing",
             ] + extraDependencies,
             cSettings: [.unsafeFlags(["-fdeclspec"])],
             swiftSettings: shouldBuildForEmbedded ? [
@@ -40,6 +43,12 @@ let package = Package(
                     "-Xlinker", "--export-if-defined=_swjs_free_host_function",
                 ]),
             ] : nil
+        ),
+        .target(
+            name: "missing",
+            dependencies: [
+                .product(name: "emsdk", package: "swift_emsdk"), 
+            ],
         ),
     ],
     swiftLanguageModes: [.v5]
