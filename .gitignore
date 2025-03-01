@@ -10,3 +10,4 @@ Bundle/index.mjs
 Bundle/index.js
 Bundle/app.wasm
 Package.resolved
+emsdk

@@ -19,14 +19,17 @@ func main() {
         gl.viewport(0, 0, 800, 600);
         gl.clearColor(1.0, 0.0, 0.0, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
+    
 
     } else {
         print("WebGL is not supported")
     }
 
+    let n:Double = 10
+    let number = sqrt(n);
+    print("sqrt(\(n)) = \(number)")
 
-    let number = sqrt(4);
-    print("sqrt(4) = \(number)")
+    
 
 }
 main()
