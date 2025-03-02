@@ -5,19 +5,7 @@ format_size_kb() {
   printf "%.2f" $(bc <<< "scale=2; $size_bytes/1024")
 }
 
-build() {
-  export EMSDK_SYSROOT=$EMSDK/upstream/emscripten/cache/sysroot
-
-  export SWIFT_TOOLCHAIN=/Library/Developer/Toolchains/swift-6.1-DEVELOPMENT-SNAPSHOT-2025-02-21-a.xctoolchain
-
-  export JAVASCRIPTKIT_EXPERIMENTAL_EMBEDDED_WASM=true 
-
-  $SWIFT_TOOLCHAIN/usr/bin/swift build -c release --product EmbeddedApp \
-    --triple wasm32-unknown-none-wasm \
-    -Xswiftc -I -Xswiftc ${EMSDK_SYSROOT}/include \
-    -Xlinker -L -Xlinker ${EMSDK_SYSROOT}/lib/wasm32-emscripten \
-    --sdk ${EMSDK_SYSROOT} 
-
+prepare_bundle() {
   if [ ! -d Bundle ]; then
     mkdir Bundle
   fi
@@ -38,8 +26,38 @@ build() {
     optimized_size=$(stat -f %z Bundle/app.wasm)
     
     echo "🔧 WASM size: Original: $(format_size_kb $original_size)KB, Optimized: $(format_size_kb $optimized_size)KB"
-
   fi
+}
+
+build_wasi() {
+  SWIFTWASM_SDK=6.0.3-RELEASE-wasm32-unknown-wasi
+  export TOOLCHAIN_NAME=swift-wasm-6.0.3-RELEASE.xctoolchain
+  export SWIFT_TOOLCHAIN=/Library/Developer/Toolchains/$TOOLCHAIN_NAME
+
+  $SWIFT_TOOLCHAIN/usr/bin/swift build -c release --product EmbeddedApp \
+  --swift-sdk $SWIFTWASM_SDK \
+  --static-swift-stdlib -Xswiftc -Xclang-linker -Xswiftc -mexec-model=reactor \
+    -Xlinker --export=__main_argc_argv
+}
+
+build_embedded_emsdk() {
+
+  if [ ! -n $EMSDK ]; then
+    echo "❌ Emsdk not installed"
+    exit 1
+  fi
+
+  export TOOLCHAIN_NAME=swift-6.1-DEVELOPMENT-SNAPSHOT-2025-02-21-a.xctoolchain
+  export EMSDK_SYSROOT=$EMSDK/upstream/emscripten/cache/sysroot
+  export SWIFT_TOOLCHAIN=/Library/Developer/Toolchains/$TOOLCHAIN_NAME
+  export JAVASCRIPTKIT_EXPERIMENTAL_EMBEDDED_WASM=true 
+
+  $SWIFT_TOOLCHAIN/usr/bin/swift build -c release --product EmbeddedApp \
+    --triple wasm32-unknown-none-wasm \
+    -Xswiftc -I -Xswiftc ${EMSDK_SYSROOT}/include \
+    -Xlinker -L -Xlinker ${EMSDK_SYSROOT}/lib/wasm32-emscripten \
+    --sdk ${EMSDK_SYSROOT} 
+
 }
 
 install_emsdk() {
@@ -68,5 +86,37 @@ install_emsdk() {
   fi
 }
 
-install_emsdk
-build
+serve() {
+  if command -v npx &> /dev/null; then
+    npx serve Bundle
+  elif command -v python3 &> /dev/null; then
+    (cd Bundle && python3 -m http.server 3000)
+  else
+    echo "❌ Neither npx serve nor python3 is available. Please install either Node.js or Python3."
+    exit 1
+  fi
+}
+
+
+
+case "${1:-all}" in
+  "emsdk")
+    install_emsdk
+    build_embedded_emsdk
+    prepare_bundle
+    ;;
+  "wasi")
+    build_wasi
+    prepare_bundle
+    ;;
+  "serve")
+    serve
+    ;;
+  *)
+    echo "Usage: $0 [emsdk|wasi|serve]"
+    echo "  emsdk: Install emsdk and build with emscripten and prepare bundle"
+    echo "  wasi:  Build with wasi and prepare bundle"
+    echo "  serve: Serve the bundle"
+    exit 1
+    ;;
+esac

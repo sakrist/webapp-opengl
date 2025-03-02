@@ -1,5 +1,10 @@
 import JavaScriptKit
+#if canImport(emsdk)
 import emsdk
+#endif
+#if canImport(WASILibc)
+import WASILibc
+#endif
 
 func main() {
 

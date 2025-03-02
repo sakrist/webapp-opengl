@@ -4,35 +4,26 @@ import PackageDescription
 let shouldBuildForEmbedded =
     Context.environment["JAVASCRIPTKIT_EXPERIMENTAL_EMBEDDED_WASM"].flatMap(Bool.init) ?? false
 
-let extraDependencies: [Target.Dependency] = shouldBuildForEmbedded
-    ? [.product(name: "dlmalloc", package: "swift-dlmalloc")]
+let targetDependencies: [Target.Dependency] = shouldBuildForEmbedded
+    ? [.product(name: "dlmalloc", package: "swift-dlmalloc"),
+       .product(name: "emswiften", package: "emswiften"), ]
     : []
 
-let package = Package(
-    name: "Embedded",
-    platforms: [.macOS(.v15)],
-    dependencies: [
-        .package(url: "https://github.com/swiftwasm/swift-dlmalloc", from: "0.1.0"),
-        .package(url: "https://github.com/swiftwasm/JavaScriptKit", branch: "main"),
-        .package(path: "../emswiften")
-    ],
-    targets: [
-        .executableTarget(
-            name: "EmbeddedApp",
-            dependencies: [
-                .product(name: "JavaScriptKit", package: "JavaScriptKit"),
-                .product(name: "emswiften", package: "emswiften"), 
-            ] + extraDependencies,
-            cSettings: [.unsafeFlags(["-fdeclspec"])],
-            swiftSettings: shouldBuildForEmbedded ? [
+let dependencies: [Package.Dependency] = shouldBuildForEmbedded
+    ? [ .package(url: "https://github.com/swiftwasm/swift-dlmalloc", from: "0.1.0"),
+        .package(url: "https://github.com/sakrist/emswiften", branch: "main"),
+    ] : []
+
+let swiftSettings: [SwiftSetting] = shouldBuildForEmbedded ? [
                 .enableExperimentalFeature("Embedded"),
                 .enableExperimentalFeature("Extern"),
                 .unsafeFlags([
                     "-Xfrontend", "-gnone",
                     "-Xfrontend", "-disable-stack-protector",
                 ]),
-            ] : nil,
-            linkerSettings: shouldBuildForEmbedded ? [
+            ] : []
+
+let linkerSettings: [LinkerSetting] = shouldBuildForEmbedded ? [
                 .unsafeFlags([
                     "-Xclang-linker", "-nostdlib",
                     "-Xlinker", "--no-entry",
@@ -41,7 +32,23 @@ let package = Package(
                     "-Xlinker", "--export-if-defined=_swjs_call_host_function",
                     "-Xlinker", "--export-if-defined=_swjs_free_host_function",
                 ]),
-            ] : nil
+            ] : []
+
+let package = Package(
+    name: "Embedded",
+    platforms: [.macOS(.v15)],
+    dependencies: [
+        .package(url: "https://github.com/swiftwasm/JavaScriptKit", branch: "main"),
+    ] + dependencies,
+    targets: [
+        .executableTarget(
+            name: "EmbeddedApp",
+            dependencies: [
+                .product(name: "JavaScriptKit", package: "JavaScriptKit"),
+            ] + targetDependencies,
+            cSettings: [.unsafeFlags(["-fdeclspec"])],
+            swiftSettings: swiftSettings,
+            linkerSettings: linkerSettings
         ),
     ],
     swiftLanguageModes: [.v5]

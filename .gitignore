@@ -7,7 +7,6 @@ DerivedData/
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
 Bundle/index.mjs
-Bundle/index.js
 Bundle/app.wasm
 Package.resolved
 emsdk
