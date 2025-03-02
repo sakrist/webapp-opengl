@@ -10,12 +10,25 @@ To build this project you need:
 - [Emscripten SDK](https://emscripten.org/docs/getting_started/downloads.html)
 
 Option 1
+
 To use swift embedded and emsdk. Escripten SDK will be installed by script.
-`./build.sh emsdk` 
+```bash
+./build.sh emsdk
+```
 
 Option 2
+
 To use swiftwasm WASI.
-`./build.sh wasi` 
+```bash
+./build.sh wasi
+```
+
+Serve via
+```bash
+./build.sh serve
+```
+
+
 
 >[!IMPORTANT]
 > Versions of both swift toolchains are hardcoded in `build_embedded_emsdk` and `build_wasi` functions of build.sh. Update to your version.
