@@ -17,13 +17,13 @@ func main() {
     }
     _ = JSObject.global.document.body.appendChild(canvas)
 
-    if var gl = canvas.getContext?("webgl") {
+    if let gl = canvas.getContext?("webgl") {
         print("WebGL is supported")
         canvas.width = 800
         canvas.height = 600
-        gl.viewport(0, 0, 800, 600);
-        gl.clearColor(1.0, 0.0, 0.0, 1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        _ = gl.viewport(0, 0, 800, 600);
+        _ = gl.clearColor(1.0, 0.0, 0.0, 1.0);
+        _ = gl.clear(gl.COLOR_BUFFER_BIT);
     
 
     } else {

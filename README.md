@@ -1,6 +1,6 @@
 
 Sample with 2 types of libc.
-One is coming from WASI and another one is from emscripten SDK.
+One is coming from WASI and another one is from Embedded + emscripten SDK.
 
 ## Build
 
@@ -9,27 +9,28 @@ To build this project you need:
 - [SwiftWasm Toolchain](https://book.swiftwasm.org/getting-started/setup.html)  
 - [Emscripten SDK](https://emscripten.org/docs/getting_started/downloads.html)
 
+>[!IMPORTANT]
+> Versions of both swift toolchains are hardcoded in `build_embedded_emsdk` and `build_wasi` functions of build.sh. Update to your version.
+
 Option 1
 
-To use swift embedded and emsdk. Escripten SDK will be installed by script.
+Uses Swift Embedded and emsdk. Escripten SDK will be installed by script next to the script. 
 ```bash
 ./build.sh emsdk
 ```
 
 Option 2
 
-To use swiftwasm WASI.
+Uses SwiftWasm with WASI.
 ```bash
 ./build.sh wasi
 ```
+
+First option produces smaller wasm file but has limited feature set.
 
 Serve via
 ```bash
 ./build.sh serve
 ```
 
-
-
->[!IMPORTANT]
-> Versions of both swift toolchains are hardcoded in `build_embedded_emsdk` and `build_wasi` functions of build.sh. Update to your version.
 
