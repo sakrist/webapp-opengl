@@ -4,11 +4,14 @@ async function main(wasiEnabled = true) {
     // Fetch our Wasm File
     const response = await fetch(`./app.wasm`);
     const { SwiftRuntime } = await import(`./index.mjs`);
+    const { WebGLInterface } = await import(`./webgl_interface.mjs`);
     // Create a new Swift Runtime instance to interact with JS and Swift
     const swift = new SwiftRuntime();
+    const webgl = new WebGLInterface();
 
     var imports = {
         javascript_kit: swift.wasmImports,
+        webgl: webgl.wasmImports,
     };
     var wasi = null;
 
@@ -31,6 +34,7 @@ async function main(wasiEnabled = true) {
     const { instance } = await WebAssembly.instantiateStreaming(response, imports);
     // Set the WebAssembly instance to the Swift Runtime
     swift.setInstance(instance);
+    webgl.setInstance(instance);
     // Start the WebAssembly WASI reactor instance
     if (wasi) {
         wasi.initialize(instance);

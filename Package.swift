@@ -39,12 +39,14 @@ let package = Package(
     platforms: [.macOS(.v15)],
     dependencies: [
         .package(url: "https://github.com/swiftwasm/JavaScriptKit", branch: "main"),
+        .package(url: "https://github.com/sakrist/SwiftMath", branch: "feature/wasm-embedded-emsdk"),
     ] + dependencies,
     targets: [
         .executableTarget(
             name: "EmbeddedApp",
             dependencies: [
                 .product(name: "JavaScriptKit", package: "JavaScriptKit"),
+                "SwiftMath",
             ] + targetDependencies,
             cSettings: [.unsafeFlags(["-fdeclspec"])],
             swiftSettings: swiftSettings,
