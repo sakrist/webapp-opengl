@@ -18,6 +18,7 @@ let swiftSettings: [SwiftSetting] = shouldBuildForEmbedded ? [
                 .enableExperimentalFeature("Embedded"),
                 .enableExperimentalFeature("Extern"),
                 .unsafeFlags([
+                    "-wmo",
                     "-Xfrontend", "-gnone",
                     "-Xfrontend", "-disable-stack-protector",
                 ]),

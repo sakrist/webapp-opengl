@@ -47,7 +47,7 @@ build_embedded_emsdk() {
     exit 1
   fi
 
-  export TOOLCHAIN_NAME=swift-6.1-DEVELOPMENT-SNAPSHOT-2025-02-21-a.xctoolchain
+  export TOOLCHAIN_NAME=swift-6.1-DEVELOPMENT-SNAPSHOT-2025-03-12-a.xctoolchain
   export EMSDK_SYSROOT=$EMSDK/upstream/emscripten/cache/sysroot
   export SWIFT_TOOLCHAIN=/Library/Developer/Toolchains/$TOOLCHAIN_NAME
   export JAVASCRIPTKIT_EXPERIMENTAL_EMBEDDED_WASM=true 
