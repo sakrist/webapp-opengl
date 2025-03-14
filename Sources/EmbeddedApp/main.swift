@@ -10,6 +10,27 @@ import SwiftMath
 import emswiften 
 
 
+let vertexShaderSource:StaticString =
+"""
+#version 300 es
+attribute vec4 position;
+void main() {
+    gl_Position = position;
+}
+"""
+
+let fragmentShaderSource:StaticString =
+"""
+#version 300 es
+precision mediump float;
+out vec4 outColor;
+void main() {
+    outColor = vec4(0.0, 0.0, 1.0, 1.0);
+}
+"""
+
+
+
 func main() {
 
     guard
@@ -23,7 +44,7 @@ func main() {
     canvas.id = "canvas"
 
     if let gl = canvas.getContext?("webgl2") {
-    //     print("WebGL is supported")
+        print("WebGL2 is supported")
         canvas.width = 600
         canvas.height = 400
         // _ = gl.viewport(0, 0, 800, 600);
@@ -36,7 +57,8 @@ func main() {
 
     setupGLContext(canvas: "canvas")
     
-    let shader = Shader()
+    
+    let shader = Shader(vertexSource: vertexShaderSource, fragmentSource: fragmentShaderSource)
 
     glViewport(0, 0, 600, 400)
     glClearColor(1.0, 0.0, 0.0, 1.0)
@@ -57,15 +79,21 @@ func main() {
                  vertices, 
                  GLenum(GL_STATIC_DRAW))
 
-    // Set up vertex attributes
-    let posAttrib = glGetAttribLocation(shader.program, "position")
-    glVertexAttribPointer(GLuint(posAttrib), 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 0, nil)
-    glEnableVertexAttribArray(GLuint(posAttrib))
+    let posAttrib:GLuint = GLuint(shader.positionAttribute)
+    glVertexAttribPointer(posAttrib, 3, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 0, nil)
+    glEnableVertexAttribArray(posAttrib)
    
-    glClear(GL_COLOR_BUFFER_BIT);
     shader.use()
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
+
+    var maxVertexAttribs: GLint = 0
+    glGetIntegerv(GLenum(GL_MAX_VERTEX_ATTRIBS), &maxVertexAttribs)
+    print("Maximum number of vertex attributes supported: \(maxVertexAttribs)")
+
+    var maxTextureSize: GLint = 0
+    glGetIntegerv(GLenum(GL_MAX_TEXTURE_SIZE), &maxTextureSize)
+    print("Maximum texture size: \(maxTextureSize)")
 
 
 /// ----------------- Math test -----------------

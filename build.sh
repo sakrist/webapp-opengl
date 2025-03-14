@@ -76,12 +76,13 @@ install_emsdk() {
       source "emsdk_env.sh"
       cd ..
   else
-    if [ ! -n $EMSDK ]; then
+    if [ -z $EMSDK ]; then
       cd "$EMSDK_DIR"
-      source "$EMSDK_DIR/emsdk_env.sh"
+      source "$EMSDK_DIR/emsdk_env.sh" > /dev/null 2>&1
       cd ..
+      echo "✅ EMSDK activated"
     else
-      echo "✅ Emsdk already installed"
+      echo "✅ EMSDK already installed"
     fi
   fi
 }

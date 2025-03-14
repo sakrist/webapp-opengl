@@ -34,3 +34,7 @@ Serve via
 ```
 
 
+## License 
+* emsdk - MIT, and [this](https://github.com/emscripten-core/emscripten/blob/main/LICENSE)
+* JavaScriptKit - [MIT](https://github.com/swiftwasm/JavaScriptKit/blob/main/LICENSE)
+* bunkernz - [MIT](https://github.com/opendevleague/bunkernz/blob/master/LICENSE)

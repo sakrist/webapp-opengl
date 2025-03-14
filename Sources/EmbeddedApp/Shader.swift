@@ -13,29 +13,13 @@ public class Shader {
     let vertexShader: UInt32
     let fragmentShader: UInt32
 
-    init() {
-        let vertexShaderSource:StaticString =
-        """
-        #version 300 es
-        attribute vec4 position;
-        void main() {
-            gl_Position = position;
-        }
-        """
+    let positionAttribute: Int32
 
-        let fragmentShaderSource:StaticString =
-        """
-        #version 300 es
-            precision mediump float;
-            out vec4 outColor;
-            void main() {
-                outColor = vec4(0.0, 0.0, 1.0, 1.0);
-            }
-        """
+    init(vertexSource:StaticString, fragmentSource: StaticString) {
 
         program = glCreateProgram()
-        vertexShader = Shader.createShader(shaderSource: vertexShaderSource, shaderType: GL_VERTEX_SHADER)
-        fragmentShader = Shader.createShader(shaderSource: fragmentShaderSource, shaderType: GL_FRAGMENT_SHADER)
+        vertexShader = Shader.createShader(shaderSource: vertexSource, shaderType: GL_VERTEX_SHADER)
+        fragmentShader = Shader.createShader(shaderSource: fragmentSource, shaderType: GL_FRAGMENT_SHADER)
 
         print("program = \(program), vertexShader = \(vertexShader), fragmentShader = \(fragmentShader)")
 
@@ -47,6 +31,9 @@ public class Shader {
         
         glLinkProgram(program)
         
+        // Set up vertex attributes
+        positionAttribute = glGetAttribLocation(program, "position")
+
         if (Shader.validateProgram(prog: program)) {
             print("Program is valid")
         } else {
