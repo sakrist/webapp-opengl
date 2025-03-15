@@ -3,15 +3,18 @@ import { WASI, File, OpenFile, ConsoleStdout, PreopenDirectory } from 'https://e
 async function main(wasiEnabled = true) {
     // Fetch our Wasm File
     const response = await fetch(`./app.wasm`);
+    const { Emscripten } = await import(`./emscripten.mjs`);
     const { SwiftRuntime } = await import(`./index.mjs`);
     const { WebGLInterface } = await import(`./webgl_interface.mjs`);
     // Create a new Swift Runtime instance to interact with JS and Swift
+    const emscripten = new Emscripten();
     const swift = new SwiftRuntime();
-    const webgl = new WebGLInterface();
+    const webgl = new WebGLInterface({emscripten : emscripten});
 
     var imports = {
         javascript_kit: swift.wasmImports,
         webgl: webgl.wasmImports,
+        env: emscripten.wasmImports,
     };
     var wasi = null;
 
@@ -33,6 +36,7 @@ async function main(wasiEnabled = true) {
     // Instantiate the WebAssembly file
     const { instance } = await WebAssembly.instantiateStreaming(response, imports);
     // Set the WebAssembly instance to the Swift Runtime
+    emscripten.setInstance(instance);
     swift.setInstance(instance);
     webgl.setInstance(instance);
     // Start the WebAssembly WASI reactor instance

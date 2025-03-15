@@ -7,7 +7,46 @@ import WASILibc
 #endif
 import emswiften
 
+
 public class Shader {
+
+    static let vertexShaderSource:StaticString =
+"""
+#version 300 es
+attribute vec4 position;
+out vec2 TexCoords;
+
+uniform mat4 model;
+uniform mat4 projection;
+
+void main() {
+    // gl_Position = position;
+    TexCoords = position.zw;
+    gl_Position = projection * model * vec4(position.xy, 0.0, 1.0);
+}
+"""
+
+static let fragmentShaderSource:StaticString =
+"""
+#version 300 es
+precision mediump float;
+in vec2 TexCoords;
+out vec4 outColor;
+
+uniform sampler2D image;
+uniform vec3 spriteColor;
+
+uniform float time;
+
+void main() {
+    // vec2 uv = gl_FragCoord.xy/vec2(600.0, 400.0);
+    // float t = time * 0.001;
+    // float color = sin(uv.x * 10.0 + t) * cos(uv.y * 10.0 + t);
+    // outColor = vec4(abs(sin(t)), color, abs(cos(t)), 1.0);
+
+    outColor = texture(image, TexCoords);
+}
+"""
 
     let program: UInt32
     let vertexShader: UInt32
@@ -15,7 +54,18 @@ public class Shader {
 
     let positionAttribute: Int32
 
-    init(vertexSource:StaticString, fragmentSource: StaticString) {
+    // uniform locations
+    let modelUniform: Int32
+    let projectionUniform: Int32
+    // fragment shader uniforms
+    let spriteColorUniform: Int32
+    let imageUniform: Int32
+    let timeUniform: Int32
+
+    let valid: Bool
+
+
+    init(vertexSource:StaticString = vertexShaderSource, fragmentSource: StaticString = fragmentShaderSource) {
 
         program = glCreateProgram()
         vertexShader = Shader.createShader(shaderSource: vertexSource, shaderType: GL_VERTEX_SHADER)
@@ -30,14 +80,35 @@ public class Shader {
         glAttachShader(program, fragmentShader)
         
         glLinkProgram(program)
+
+        glUseProgram(program)
         
+        modelUniform = glGetUniformLocation(program, "model")
+        projectionUniform = glGetUniformLocation(program, "projection")
+        spriteColorUniform = glGetUniformLocation(program, "spriteColor")
+        imageUniform = glGetUniformLocation(program, "image")
+        timeUniform = glGetUniformLocation(program, "time")
+
+        
+        if (imageUniform != -1) {
+            glUniform1i(imageUniform, 0)
+        } else {
+            print("imageUniform not found")
+        }
+        
+        if (spriteColorUniform != -1) {
+            glUniform3f(spriteColorUniform, 1, 1, 1)
+        } 
+
         // Set up vertex attributes
         positionAttribute = glGetAttribLocation(program, "position")
 
         if (Shader.validateProgram(prog: program)) {
             print("Program is valid")
+            valid = true
         } else {
             print("Program is invalid")
+            valid = false
         }
     }
 
@@ -59,6 +130,18 @@ public class Shader {
         glShaderSource(shader, 1, &castSource, nil)
         glCompileShader(shader)
         source.deallocate()
+
+        var logLength: GLint = 0
+        glGetShaderiv(shader, GLenum(GL_INFO_LOG_LENGTH), &logLength)
+        if logLength > 1 {
+            var log = [GLchar](repeating: 0, count: 512)
+            glGetShaderInfoLog(shader, 512, &logLength, &log)
+            
+            let logString = String(cString:log)
+            print(logString)
+            
+        }
+        
         return shader
     }
 

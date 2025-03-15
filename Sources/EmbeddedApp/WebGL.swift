@@ -65,6 +65,12 @@ public func glGetProgramInfoLog(_ program: GLuint, _ bufSize: GLsizei, _ length:
 @_extern(wasm, module: "webgl", name: "glValidateProgram")
 public func glValidateProgram(_ program: GLuint) -> Void
 
+@_extern(wasm, module: "webgl", name: "glGetShaderiv")
+public func glGetShaderiv(_ shader: GLuint, _ pname: GLenum, _ params: UnsafeMutablePointer<GLint>!) -> Void
+
+@_extern(wasm, module: "webgl", name: "glGetShaderInfoLog")
+public func glGetShaderInfoLog(_ shader: GLuint, _ bufSize: GLsizei, _ length: UnsafeMutablePointer<GLsizei>!, _ infoLog: UnsafeMutablePointer<GLchar>!) -> Void
+
 @_extern(wasm, module: "webgl", name: "glGetAttribLocation")
 public func glGetAttribLocation(_ program: GLuint, _ name: UnsafePointer<GLchar>!) -> Int32
 
@@ -128,6 +134,9 @@ public func glUniform3iv(_ location: GLint, _ count: GLsizei, _ value: UnsafePoi
 @_extern(wasm, module: "webgl", name: "glUniform4iv")
 public func glUniform4iv(_ location: GLint, _ count: GLsizei, _ value: UnsafePointer<GLint>!) -> Void
 
+@_extern(wasm, module: "webgl", name: "glUniformMatrix4fv")
+public func glUniformMatrix4fv(_ location: GLint, _ count: GLsizei, _ transpose: GLboolean, _ value: UnsafePointer<Float>!) -> Void
+
 @_extern(wasm, module: "webgl", name: "glGenBuffers")
 public func glGenBuffers(_ n: GLsizei, _ buffers: UnsafeMutablePointer<GLuint>!) -> Void
 
@@ -136,6 +145,18 @@ public func glBindBuffer(_ target: GLenum, _ buffer: GLuint) -> Void
 
 @_extern(wasm, module: "webgl", name: "glBufferData")
 public func glBufferData(_ target: GLenum, _ size: GLsizei, _ data: UnsafeRawPointer!, _ usage: GLenum) -> Void
+
+@_extern(wasm, module: "webgl", name: "glGenVertexArrays")
+public func glGenVertexArrays(_ n: GLsizei, _ arrays: UnsafeMutablePointer<GLuint>!) -> Void
+
+@_extern(wasm, module: "webgl", name: "glBindVertexArray")
+public func glBindVertexArray(_ array: GLuint) -> Void
+
+@_extern(wasm, module: "webgl", name: "glDeleteVertexArrays")
+public func glDeleteVertexArrays(_ n: GLsizei, _ arrays: UnsafePointer<GLuint>!) -> Void
+
+@_extern(wasm, module: "webgl", name: "glDeleteBuffers")
+public func glDeleteBuffers(_ n: GLsizei, _ buffers: UnsafePointer<GLuint>!) -> Void
 
 @_extern(wasm, module: "webgl", name: "glBlendFunc")
 public func glBlendFunc(_ sfactor: GLenum, _ dfactor: GLenum) -> Void
@@ -157,3 +178,18 @@ public func glGetError() -> GLenum
 
 @_extern(wasm, module: "webgl", name: "glGetIntegerv")
 public func glGetIntegerv(_ pname: GLenum, _ params: UnsafeMutablePointer<GLint>!) -> Void
+
+@_extern(wasm, module: "webgl", name: "glActiveTexture")
+public func glActiveTexture(_ texture: GLenum) -> Void
+
+@_extern(wasm, module: "webgl", name: "glTexImage2D")
+public func glTexImage2D(_ target: GLenum, _ level: GLint, _ internalformat: GLint, _ width: GLsizei, _ height: GLsizei, _ border: GLint, _ format: GLenum, _ type: GLenum, _ pixels: UnsafeRawPointer!) -> Void
+
+@_extern(wasm, module: "webgl", name: "glGenTextures")
+public func glGenTextures(_ n: GLsizei, _ textures: UnsafeMutablePointer<GLuint>!) -> Void
+
+@_extern(wasm, module: "webgl", name: "glBindTexture")
+public func glBindTexture(_ target: GLenum, _ texture: GLuint) -> Void
+
+@_extern(wasm, module: "webgl", name: "glTexParameteri")
+public func glTexParameteri(_ target: GLenum, _ pname: GLenum, _ param: GLint) -> Void

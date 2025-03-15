@@ -12,6 +12,7 @@ let targetDependencies: [Target.Dependency] = shouldBuildForEmbedded
 let dependencies: [Package.Dependency] = shouldBuildForEmbedded
     ? [ .package(url: "https://github.com/swiftwasm/swift-dlmalloc", from: "0.1.0"),
         .package(url: "https://github.com/sakrist/emswiften", branch: "main"),
+        // .package(path: "../emswiften"),
     ] : []
 
 let swiftSettings: [SwiftSetting] = shouldBuildForEmbedded ? [
@@ -41,6 +42,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/swiftwasm/JavaScriptKit", branch: "main"),
         .package(url: "https://github.com/sakrist/SwiftMath", branch: "feature/wasm-embedded-emsdk"),
+        // .package(path: "../SwiftMath"),
     ] + dependencies,
     targets: [
         .executableTarget(
