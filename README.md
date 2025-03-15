@@ -37,8 +37,8 @@ Serve via
 ```
 
 
+<img src="Screenshot.jpg" width="40%">
 
-![img](Screenshot.jpg)
 
 ## License 
 * emsdk - MIT, and [this](https://github.com/emscripten-core/emscripten/blob/main/LICENSE)
