@@ -17,6 +17,24 @@
             "name": "Release EmbeddedApp",
             "program": "${workspaceFolder:webapp}/.build/release/EmbeddedApp",
             "preLaunchTask": "swift: Build Release EmbeddedApp"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:webapp}",
+            "name": "Debug App",
+            "program": "${workspaceFolder:webapp}/.build/debug/App",
+            "preLaunchTask": "swift: Build Debug App"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:webapp}",
+            "name": "Release App",
+            "program": "${workspaceFolder:webapp}/.build/release/App",
+            "preLaunchTask": "swift: Build Release App"
         }
     ]
     
