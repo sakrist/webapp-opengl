@@ -58,8 +58,13 @@ class App {
         shader = Shader()
         spriteRenderer = SpriteRenderer(shader: shader)
 
-        game = Game(viewSize: viewSize)
+        game = Game(renderer: spriteRenderer, viewSize: viewSize)
         game.createWorld()
+
+        canvas.onclick = JSValue.object( JSClosure { _ in
+            self.game.event()
+            return .undefined
+        })        
     }
 
 
@@ -94,10 +99,7 @@ class App {
             glUniform1f(shader.timeUniform, Float(lastTime))
         }
 
-        for sprite in game.sprites {
-            sprite.update(delta: deltaTime)
-            spriteRenderer.draw(sprite)
-        }
+        game.update(delta: deltaTime)
 
         lastTime = time1
     }

@@ -37,7 +37,7 @@ let linkerSettings: [LinkerSetting] = shouldBuildForEmbedded ? [
             ] : []
 
 let package = Package(
-    name: "Embedded",
+    name: "App",
     platforms: [.macOS(.v15)],
     dependencies: [
         .package(url: "https://github.com/swiftwasm/JavaScriptKit", branch: "main"),
@@ -46,7 +46,7 @@ let package = Package(
     ] + dependencies,
     targets: [
         .executableTarget(
-            name: "EmbeddedApp",
+            name: "App",
             dependencies: [
                 .product(name: "JavaScriptKit", package: "JavaScriptKit"),
                 "SwiftMath",

@@ -5,7 +5,7 @@ import emsdk
 #if canImport(WASILibc)
 import WASILibc
 #endif
-import emswiften
+
 
 
 public class Shader {

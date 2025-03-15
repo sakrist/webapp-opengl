@@ -19,10 +19,10 @@ prepare_bundle() {
   fi
 
   if ! command -v wasm-opt &> /dev/null; then
-    cp .build/release/EmbeddedApp.wasm Bundle/app.wasm
+    cp .build/release/App.wasm Bundle/app.wasm
   else
-    wasm-opt -O3 .build/release/EmbeddedApp.wasm -o Bundle/app.wasm
-    original_size=$(stat -f %z .build/release/EmbeddedApp.wasm)
+    wasm-opt -O3 .build/release/App.wasm -o Bundle/app.wasm
+    original_size=$(stat -f %z .build/release/App.wasm)
     optimized_size=$(stat -f %z Bundle/app.wasm)
     
     echo "🔧 WASM size: Original: $(format_size_kb $original_size)KB, Optimized: $(format_size_kb $optimized_size)KB"
@@ -34,7 +34,7 @@ build_wasi() {
   export TOOLCHAIN_NAME=swift-wasm-6.0.3-RELEASE.xctoolchain
   export SWIFT_TOOLCHAIN=/Library/Developer/Toolchains/$TOOLCHAIN_NAME
 
-  $SWIFT_TOOLCHAIN/usr/bin/swift build -c release --product EmbeddedApp \
+  $SWIFT_TOOLCHAIN/usr/bin/swift build -c release --product App \
   --swift-sdk $SWIFTWASM_SDK \
   --static-swift-stdlib -Xswiftc -Xclang-linker -Xswiftc -mexec-model=reactor \
     -Xlinker --export=__main_argc_argv
@@ -52,7 +52,7 @@ build_embedded_emsdk() {
   export SWIFT_TOOLCHAIN=/Library/Developer/Toolchains/$TOOLCHAIN_NAME
   export JAVASCRIPTKIT_EXPERIMENTAL_EMBEDDED_WASM=true 
 
-  $SWIFT_TOOLCHAIN/usr/bin/swift build -c release --product EmbeddedApp \
+  $SWIFT_TOOLCHAIN/usr/bin/swift build -c release --product App \
     --triple wasm32-unknown-none-wasm \
     -Xswiftc -I -Xswiftc ${EMSDK_SYSROOT}/include \
     -Xlinker -L -Xlinker ${EMSDK_SYSROOT}/lib/wasm32-emscripten \
