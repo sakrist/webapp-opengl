@@ -15,7 +15,7 @@ func currentMillis() -> Int64 {
 
 class App {
 
-    var viewSize: vec2 = vec2(600, 400)
+    var viewSize: vec2
     var lastTime: Double = 0
 
     var projection: mat4 = mat4.identity

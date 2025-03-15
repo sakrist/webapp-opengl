@@ -12,7 +12,7 @@ import emswiften
 #endif
 
 
-let app = App()
+let app = App(viewSize: vec2(400, 500))
 
 func main() {
 

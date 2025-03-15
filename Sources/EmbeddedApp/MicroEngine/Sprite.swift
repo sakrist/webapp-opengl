@@ -21,6 +21,7 @@ class Sprite {
     var textureOffset: vec2 = vec2(0, 0)
     
     var name: String = ""
+    var hidden: Bool = false
 
     init(position:vec2, size:vec2, rotation:Float, image: Image? = nil, frames: [Image] = []) {
     
@@ -59,6 +60,10 @@ class Sprite {
         let animation = MoveAnimation(from: self.position, to: newPosition, duration: duration, onComplete: onComplete)
         animation.onCancel = onCancel
         animations.append(animation)
+    }
+
+    func wrapAround(speed: vec2, bounds: (min: vec2, max: vec2)) {
+        animations.append(WrapAroundAnimation(speed: speed, bounds: bounds, spriteSize: size))
     }
     
     func cancelAllAnimations() {
@@ -106,6 +111,14 @@ class Sprite {
         }
     }
 
+    func draw(_ renderer: SpriteRenderer) {
+        if hidden {
+            return
+        }
+        renderer.draw(self)
+    }
+
+
     func _recalc() {
         
         var model = mat4.identity
@@ -139,6 +152,7 @@ class Sprite {
         ].map { vec2($0.x, $0.y) }
 
         // Check for separating axis using SAT (Separating Axis Theorem)
+        // not sure if I fully understand this
         for shape in [corners1, corners2] {
             for i in 0..<shape.count {
                 let edge = shape[(i + 1) % shape.count] - shape[i]
@@ -168,12 +182,4 @@ class Sprite {
         return false
     }
 
-    // func isColliding(with point: Point, at x: Int, y: Int) -> Bool {
-    //     // Check if the sprite is coll
-    // }
-    
-
-    func wrapAround(speed: vec2, bounds: (min: vec2, max: vec2)) {
-        animations.append(WrapAroundAnimation(speed: speed, bounds: bounds, spriteSize: size))
-    }
 }
