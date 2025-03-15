@@ -12,7 +12,7 @@ To build this project you need:
 >[!IMPORTANT]
 > Versions of both swift toolchains are hardcoded in `build_embedded_emsdk` and `build_wasi` functions of build.sh. Update to your version.
 
-Option 1
+Option 1 - try this
 
 Uses Swift Embedded and emsdk. Escripten SDK will be installed by script next to the script. 
 ```bash
@@ -20,6 +20,9 @@ Uses Swift Embedded and emsdk. Escripten SDK will be installed by script next to
 ```
 
 Option 2
+ 
+ >[!IMPORTANT]
+ >Broken at the moment. If you want to try with wasi. Switch to wasi tag to try latest working version.
 
 Uses SwiftWasm with WASI.
 ```bash
@@ -33,6 +36,9 @@ Serve via
 ./build.sh serve
 ```
 
+
+
+![img](Screenshot.jpg)
 
 ## License 
 * emsdk - MIT, and [this](https://github.com/emscripten-core/emscripten/blob/main/LICENSE)
