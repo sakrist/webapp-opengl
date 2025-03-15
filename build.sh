@@ -19,10 +19,10 @@ prepare_bundle() {
   fi
 
   if ! command -v wasm-opt &> /dev/null; then
-    cp .build/release/EmbeddedApp.wasm Bundle/app.wasm
+    cp .build/release/App.wasm Bundle/app.wasm
   else
-    wasm-opt -O3 .build/release/EmbeddedApp.wasm -o Bundle/app.wasm
-    original_size=$(stat -f %z .build/release/EmbeddedApp.wasm)
+    wasm-opt -O3 .build/release/App.wasm -o Bundle/app.wasm
+    original_size=$(stat -f %z .build/release/App.wasm)
     optimized_size=$(stat -f %z Bundle/app.wasm)
     
     echo "🔧 WASM size: Original: $(format_size_kb $original_size)KB, Optimized: $(format_size_kb $optimized_size)KB"
@@ -34,7 +34,7 @@ build_wasi() {
   export TOOLCHAIN_NAME=swift-wasm-6.0.3-RELEASE.xctoolchain
   export SWIFT_TOOLCHAIN=/Library/Developer/Toolchains/$TOOLCHAIN_NAME
 
-  $SWIFT_TOOLCHAIN/usr/bin/swift build -c release --product EmbeddedApp \
+  $SWIFT_TOOLCHAIN/usr/bin/swift build -c release --product App \
   --swift-sdk $SWIFTWASM_SDK \
   --static-swift-stdlib -Xswiftc -Xclang-linker -Xswiftc -mexec-model=reactor \
     -Xlinker --export=__main_argc_argv
@@ -47,12 +47,12 @@ build_embedded_emsdk() {
     exit 1
   fi
 
-  export TOOLCHAIN_NAME=swift-6.1-DEVELOPMENT-SNAPSHOT-2025-02-21-a.xctoolchain
+  export TOOLCHAIN_NAME=swift-6.1-DEVELOPMENT-SNAPSHOT-2025-03-12-a.xctoolchain
   export EMSDK_SYSROOT=$EMSDK/upstream/emscripten/cache/sysroot
   export SWIFT_TOOLCHAIN=/Library/Developer/Toolchains/$TOOLCHAIN_NAME
   export JAVASCRIPTKIT_EXPERIMENTAL_EMBEDDED_WASM=true 
 
-  $SWIFT_TOOLCHAIN/usr/bin/swift build -c release --product EmbeddedApp \
+  $SWIFT_TOOLCHAIN/usr/bin/swift build -c release --product App \
     --triple wasm32-unknown-none-wasm \
     -Xswiftc -I -Xswiftc ${EMSDK_SYSROOT}/include \
     -Xlinker -L -Xlinker ${EMSDK_SYSROOT}/lib/wasm32-emscripten \
@@ -76,12 +76,13 @@ install_emsdk() {
       source "emsdk_env.sh"
       cd ..
   else
-    if [ ! -n $EMSDK ]; then
+    if [ -z $EMSDK ]; then
       cd "$EMSDK_DIR"
-      source "$EMSDK_DIR/emsdk_env.sh"
+      source "$EMSDK_DIR/emsdk_env.sh" > /dev/null 2>&1
       cd ..
+      echo "✅ EMSDK activated"
     else
-      echo "✅ Emsdk already installed"
+      echo "✅ EMSDK already installed"
     fi
   fi
 }

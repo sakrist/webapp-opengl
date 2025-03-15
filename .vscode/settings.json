@@ -1,5 +1,5 @@
 {
-    "swift.path": "/Library/Developer/Toolchains/swift-6.1-DEVELOPMENT-SNAPSHOT-2025-02-21-a.xctoolchain/usr/bin",
-    "lldb.library": "/Library/Developer/Toolchains/swift-6.1-DEVELOPMENT-SNAPSHOT-2025-02-21-a.xctoolchain/System/Library/PrivateFrameworks/LLDB.framework/Versions/A/LLDB",
+    "swift.path": "/Library/Developer/Toolchains/swift-6.1-DEVELOPMENT-SNAPSHOT-2025-03-12-a.xctoolchain/usr/bin",
+    "lldb.library": "/Library/Developer/Toolchains/swift-6.1-DEVELOPMENT-SNAPSHOT-2025-03-12-a.xctoolchain/System/Library/PrivateFrameworks/LLDB.framework/Versions/A/LLDB",
     "lldb.launch.expressions": "native",
 }
