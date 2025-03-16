@@ -1,6 +1,11 @@
 import SwiftMath
-
+#if canImport(emsdk)
 import emsdk
+#endif
+
+#if canImport(WASILibc)
+import WASILibc
+#endif
 
 class Particle {
     var position: vec2
