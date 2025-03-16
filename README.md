@@ -33,6 +33,7 @@ Serve via
 ./build.sh serve
 ```
 
+To try game go to blog post [here](https://sakrist.com/posts/swift-and-webassembly-for-a-browser/#flappy-bird-clone)
 
 <img src="Screenshot.jpg" width="40%">
 
