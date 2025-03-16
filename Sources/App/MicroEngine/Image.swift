@@ -3,6 +3,9 @@ import JavaScriptKit
 #if canImport(emsdk)
     import emsdk
 #endif
+#if canImport(COpenGL)
+import COpenGL
+#endif
 
 class Image {
     var width: Int

@@ -3,9 +3,9 @@ import { WASI, File, OpenFile, ConsoleStdout, PreopenDirectory } from 'https://e
 async function main(wasiEnabled = true) {
     // Fetch our Wasm File
     const response = await fetch(`./app.wasm`);
-    const { Emscripten } = await import(`./emscripten.mjs`);
-    const { SwiftRuntime } = await import(`./index.mjs`);
-    const { WebGLInterface } = await import(`./webgl_interface.mjs`);
+    const { Emscripten } = await import(`./emscripten.js`);
+    const { SwiftRuntime } = await import(`./runtime.js`);
+    const { WebGLInterface } = await import(`./webgl_interface.js`);
     // Create a new Swift Runtime instance to interact with JS and Swift
     const emscripten = new Emscripten();
     const swift = new SwiftRuntime();

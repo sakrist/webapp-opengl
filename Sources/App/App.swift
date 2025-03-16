@@ -5,11 +5,19 @@ import SwiftMath
 import emsdk
 #endif
 
+#if canImport(COpenGL)
+import COpenGL
+#endif
 
-func currentMillis() -> Int64 {
+
+func time() -> Double {
+#if canImport(emsdk)
     var tp: timeval = timeval()
     gettimeofday(&tp, nil)
-    return tp.tv_sec * 1000 + Int64(tp.tv_usec / 1000);
+    return Double(tp.tv_sec * 1000 + Int64(tp.tv_usec / 1000)) / 1000.0;
+#elseif canImport(WASILibc)
+    return (JSObject.global.performance.now().number ?? 0) / 1000.0
+#endif
 }
 
 
@@ -83,7 +91,7 @@ class App {
         glClearColor(0.18, 0.746, 0.867, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
-        let time1: Double = Double(currentMillis()) / 1000.0
+        let time1: Double = time()
         let deltaTime = time1 - lastTime
         
         shader.use()

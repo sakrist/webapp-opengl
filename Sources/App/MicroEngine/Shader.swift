@@ -5,7 +5,9 @@ import emsdk
 #if canImport(WASILibc)
 import WASILibc
 #endif
-
+#if canImport(COpenGL)
+import COpenGL
+#endif
 
 
 public class Shader {

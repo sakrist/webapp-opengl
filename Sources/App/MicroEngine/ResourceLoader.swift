@@ -1,4 +1,3 @@
-
 import JavaScriptKit
 
 
@@ -25,7 +24,7 @@ class ResourceLoader {
         _ = ctx.strokeText(text, 0 , height);
         
         let imageData = ctx.getImageData(0, 0, width, height)
-        let data1 = imageData.data
+        let data1 = imageData.data as JSValue
         let dataLength = Int(data1.length.number ?? 0)
         var dataBytes = [UInt8](repeating: 0, count: dataLength)
         for i in 0..<dataLength {
@@ -39,32 +38,31 @@ class ResourceLoader {
         // TODO: replace with loading from filesystem and use libpng or similar
         
         var image = JSObject.global.document.createElement("img")
-        image.onload = JSValue.object(
-            JSClosure { _ in
+        image.onload = .object(JSClosure { _ in
 
-                let width = Int(image.width.number ?? 0)
-                let height = Int(image.height.number ?? 0)
-                // convert image to data
-                var canvas = JSObject.global.document.createElement("canvas")
-                let ctx = canvas.getContext("2d")
-                canvas.width = .init(integerLiteral: Int32(width))
-                canvas.height = .init(integerLiteral: Int32(height))
-                // _ = ctx.fillStyle = "rgba(0, 0, 0, 0)"
-                _ = ctx.clearRect(0, 0, width, height)
-                _ = ctx.scale(1, -1)
-                _ = ctx.translate(0, -height)
-                _ = ctx.drawImage(image, 0, 0)
-                let imageData = ctx.getImageData(0, 0, width, height)
-                let data1 = imageData.data
-                let dataLength = Int(data1.length.number ?? 0)
-                var dataBytes = [UInt8](repeating: 0, count: dataLength)
-                for i in 0..<dataLength {
-                    dataBytes[i] = UInt8(data1[i].number ?? 0)
-                }
-                completion(width, height, dataBytes)
-                
-                return .undefined
-            })
+            let width = Int(image.width.number ?? 0)
+            let height = Int(image.height.number ?? 0)
+            // convert image to data
+            var canvas = JSObject.global.document.createElement("canvas")
+            let ctx = canvas.getContext("2d")
+            canvas.width = .init(integerLiteral: Int32(width))
+            canvas.height = .init(integerLiteral: Int32(height))
+            // _ = ctx.fillStyle = "rgba(0, 0, 0, 0)"
+            _ = ctx.clearRect(0, 0, width, height)
+            _ = ctx.scale(1, -1)
+            _ = ctx.translate(0, -height)
+            _ = ctx.drawImage(image, 0, 0)
+            let imageData = ctx.getImageData(0, 0, width, height)
+            let data1 = imageData.data as JSValue
+            let dataLength = Int(data1.length.number ?? 0)
+            var dataBytes = [UInt8](repeating: 0, count: dataLength)
+            for i in 0..<dataLength {
+                dataBytes[i] = UInt8(data1[i].number ?? 0)
+            }
+            completion(width, height, dataBytes)
+            
+            return .undefined
+        })
         image.src = .init(stringLiteral: "./img/\(name)")
     }
 }

@@ -20,16 +20,13 @@ Uses Swift Embedded and emsdk. Escripten SDK will be installed by script next to
 ```
 
 Option 2
- 
- >[!IMPORTANT]
- >Broken at the moment. If you want to try with wasi. Switch to wasi tag to try latest working version.
 
 Uses SwiftWasm with WASI.
 ```bash
 ./build.sh wasi
 ```
 
-First option produces smaller wasm file but has limited feature set.
+First option produces smaller wasm file.
 
 Serve via
 ```bash

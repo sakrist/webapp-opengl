@@ -1,8 +1,13 @@
 
 import SwiftMath
+#if canImport(emswiften)
 import emswiften
+#endif
 #if canImport(emsdk)
 import emsdk
+#endif
+#if canImport(COpenGL)
+import COpenGL
 #endif
 
 

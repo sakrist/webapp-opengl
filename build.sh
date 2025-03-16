@@ -1,5 +1,11 @@
 #!/bin/bash
 
+BUILD_TYPE=release
+# if debug
+if [ ! -z "$DEBUG" ]; then
+  BUILD_TYPE=debug
+fi
+
 format_size_kb() {
   local size_bytes=$1
   printf "%.2f" $(bc <<< "scale=2; $size_bytes/1024")
@@ -10,16 +16,16 @@ prepare_bundle() {
     mkdir Bundle
   fi
 
-  if [ ! -f Bundle/index.mjs ]; then
-    cp .build/checkouts/JavaScriptKit/Sources/JavaScriptKit/Runtime/index.mjs Bundle/index.mjs  
+  if [ ! -f Bundle/runtime.js ]; then
+    cp .build/checkouts/JavaScriptKit/Sources/JavaScriptKit/Runtime/index.mjs Bundle/runtime.js  
   fi
 
   if [ -f Bundle/app.wasm ]; then
     rm Bundle/app.wasm
   fi
 
-  if ! command -v wasm-opt &> /dev/null; then
-    cp .build/release/App.wasm Bundle/app.wasm
+  if [ ! command -v wasm-opt &> /dev/null ] || [ "$BUILD_TYPE" = "debug" ]; then
+    cp .build/debug/App.wasm Bundle/app.wasm
   else
     wasm-opt -O3 .build/release/App.wasm -o Bundle/app.wasm
     original_size=$(stat -f %z .build/release/App.wasm)
@@ -34,10 +40,17 @@ build_wasi() {
   export TOOLCHAIN_NAME=swift-wasm-6.0.3-RELEASE.xctoolchain
   export SWIFT_TOOLCHAIN=/Library/Developer/Toolchains/$TOOLCHAIN_NAME
 
-  $SWIFT_TOOLCHAIN/usr/bin/swift build -c release --product App \
+  $SWIFT_TOOLCHAIN/usr/bin/swift build -c $BUILD_TYPE --product App \
   --swift-sdk $SWIFTWASM_SDK \
   --static-swift-stdlib -Xswiftc -Xclang-linker -Xswiftc -mexec-model=reactor \
     -Xlinker --export=__main_argc_argv
+
+  if [ $? -eq 0 ]; then
+    prepare_bundle
+  else
+    echo "❌ Build failed"
+    exit 1
+  fi
 }
 
 build_embedded_emsdk() {
@@ -52,12 +65,18 @@ build_embedded_emsdk() {
   export SWIFT_TOOLCHAIN=/Library/Developer/Toolchains/$TOOLCHAIN_NAME
   export JAVASCRIPTKIT_EXPERIMENTAL_EMBEDDED_WASM=true 
 
-  $SWIFT_TOOLCHAIN/usr/bin/swift build -c release --product App \
+  $SWIFT_TOOLCHAIN/usr/bin/swift build -c $BUILD_TYPE --product App \
     --triple wasm32-unknown-none-wasm \
     -Xswiftc -I -Xswiftc ${EMSDK_SYSROOT}/include \
     -Xlinker -L -Xlinker ${EMSDK_SYSROOT}/lib/wasm32-emscripten \
     --sdk ${EMSDK_SYSROOT} 
 
+  if [ $? -eq 0 ]; then
+    prepare_bundle
+  else
+    echo "❌ Build failed"
+    exit 1
+  fi
 }
 
 install_emsdk() {
@@ -98,26 +117,35 @@ serve() {
   fi
 }
 
-
+clean() {
+  if [ -d ".build" ]; then
+    echo "🧹 Cleaning .build directory..."
+    rm -rf .build
+  else
+    echo "✅ Nothing to clean"
+  fi
+}
 
 case "${1:-all}" in
   "emsdk")
     install_emsdk
     build_embedded_emsdk
-    prepare_bundle
     ;;
   "wasi")
     build_wasi
-    prepare_bundle
     ;;
   "serve")
     serve
     ;;
+  "clean")
+    clean
+    ;;
   *)
-    echo "Usage: $0 [emsdk|wasi|serve]"
+    echo "Usage: $0 [emsdk|wasi|serve|clean]"
     echo "  emsdk: Install emsdk and build with emscripten and prepare bundle"
     echo "  wasi:  Build with wasi and prepare bundle"
     echo "  serve: Serve the bundle"
+    echo "  clean: Remove the .build directory"
     exit 1
     ;;
 esac

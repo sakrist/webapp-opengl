@@ -7,13 +7,15 @@ let shouldBuildForEmbedded =
 let targetDependencies: [Target.Dependency] = shouldBuildForEmbedded
     ? [.product(name: "dlmalloc", package: "swift-dlmalloc"),
        .product(name: "emswiften", package: "emswiften"), ]
-    : []
+    : [ .product(name: "COpenGL", package: "copengl.swift")]
 
 let dependencies: [Package.Dependency] = shouldBuildForEmbedded
     ? [ .package(url: "https://github.com/swiftwasm/swift-dlmalloc", from: "0.1.0"),
         .package(url: "https://github.com/sakrist/emswiften", branch: "main"),
         // .package(path: "../emswiften"),
-    ] : []
+    ] : [
+        .package(url: "https://github.com/sakrist/COpenGL.swift", branch: "wasi"),
+    ]
 
 let swiftSettings: [SwiftSetting] = shouldBuildForEmbedded ? [
                 .enableExperimentalFeature("Embedded"),
@@ -23,7 +25,7 @@ let swiftSettings: [SwiftSetting] = shouldBuildForEmbedded ? [
                     "-Xfrontend", "-gnone",
                     "-Xfrontend", "-disable-stack-protector",
                 ]),
-            ] : []
+            ] : [.enableExperimentalFeature("Extern")]
 
 let linkerSettings: [LinkerSetting] = shouldBuildForEmbedded ? [
                 .unsafeFlags([
@@ -41,7 +43,7 @@ let package = Package(
     platforms: [.macOS(.v15)],
     dependencies: [
         .package(url: "https://github.com/swiftwasm/JavaScriptKit", branch: "main"),
-        .package(url: "https://github.com/sakrist/SwiftMath", branch: "feature/wasm-embedded-emsdk"),
+        .package(url: "https://github.com/sakrist/SwiftMath", branch: "master"),
         // .package(path: "../SwiftMath"),
     ] + dependencies,
     targets: [

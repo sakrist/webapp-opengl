@@ -10,3 +10,4 @@ Bundle/index.mjs
 Bundle/app.wasm
 Package.resolved
 emsdk
+Bundle/runtime.js

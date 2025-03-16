@@ -1,11 +1,13 @@
 import JavaScriptKit
 
+#if hasFeature(Embedded)
 // NOTE: it seems the embedded tree shaker gets rid of these exports if they are not used somewhere
 func _i_need_to_be_here_for_wasm_exports_to_work() {
     _ = _swjs_library_features
     _ = _swjs_call_host_function
     _ = _swjs_free_host_function
 }
+#endif
 
 func print(_ message: String) {
     _ = JSObject.global.console.log(message)
@@ -38,8 +40,3 @@ extension JSObject {
         set { self[name] = JSValue.number(Double(newValue)) }
     }
 }
-
-// alternative 
-// func time() -> Double {
-//     JSObject.global.performance.now().number ?? 0
-// }
