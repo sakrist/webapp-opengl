@@ -29,7 +29,8 @@ class App {
     var projection: mat4 = mat4.identity
     var projectionArray: [Float] = []
 
-    let shader: Shader
+    let spriteShader: ShaderSprites
+    let particleShader: ShaderParticles
     let spriteRenderer: SpriteRenderer
     let game: Game
 
@@ -63,8 +64,10 @@ class App {
         glEnable(Int32(GL_BLEND))
         glBlendFunc(GLenum(GL_SRC_ALPHA), GLenum(GL_ONE_MINUS_SRC_ALPHA))
 
-        shader = Shader()
-        spriteRenderer = SpriteRenderer(shader: shader)
+        spriteShader = ShaderSprites()
+        particleShader = ShaderParticles()
+        spriteRenderer = SpriteRenderer(spriteShader: spriteShader, 
+                                      particleShader: particleShader)
 
         game = Game(renderer: spriteRenderer, viewSize: viewSize)
         game.createWorld()
@@ -77,8 +80,22 @@ class App {
 
 
     func setup() {
+
+        // Set projection for both shaders
+        projectionArray.withUnsafeBytes { ptr in
+            ptr.baseAddress?.assumingMemoryBound(to: GLfloat.self).withMemoryRebound(
+                to: GLfloat.self, capacity: 16
+            ) { floatPtr in
+                self.spriteShader.use()
+                glUniformMatrix4fv(self.spriteShader.projectionUniform, 1, GLboolean(GL_FALSE), floatPtr)
+                
+                self.particleShader.use()
+                glUniformMatrix4fv(self.particleShader.projectionUniform, 1, GLboolean(GL_FALSE), floatPtr)
+            }
+        }
+        
         glDisable(GL_CULL_FACE)
-        if (!shader.valid) {
+        if (!spriteShader.valid || !particleShader.valid) {
             print("Shader program is not initialized")
             return
         }
@@ -94,18 +111,10 @@ class App {
         let time1: Double = time()
         let deltaTime = time1 - lastTime
         
-        shader.use()
-        projectionArray.withUnsafeBytes { ptr in
-            ptr.baseAddress?.assumingMemoryBound(to: GLfloat.self).withMemoryRebound(
-                to: GLfloat.self, capacity: 16
-            ) { floatPtr in
-                glUniformMatrix4fv(
-                    GLint(shader.projectionUniform), 1, GLboolean(GL_FALSE), floatPtr)
-            }
-        }
-        if (shader.timeUniform != -1) {
-            glUniform1f(shader.timeUniform, Float(lastTime))
-        }
+        // spriteShader.use()
+        // if (spriteShader.timeUniform != -1) {
+        //     glUniform1f(spriteShader.timeUniform, Float(lastTime))
+        // }
 
         game.update(delta: deltaTime)
 

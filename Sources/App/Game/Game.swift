@@ -29,6 +29,7 @@ class Game {
 
     let renderer: SpriteRenderer
     var viewSize: vec2
+    private let particles = ParticleSystem(maxParticles: 100)
     init(renderer: SpriteRenderer, viewSize: vec2) {
         self.renderer = renderer
         self.viewSize = viewSize
@@ -167,6 +168,9 @@ class Game {
             play()
         case .playing:
             bird?.flap()
+            if let birdPosition = bird?.position {
+                particles.emit(at: birdPosition)
+            }
         case .gameOver:
             state = .start
             reset()
@@ -223,6 +227,9 @@ class Game {
         if (pipes?.isColliding(with:bird!) == true) {
             stop()
         }
+        
+        particles.update(delta: delta)
+        particles.draw(renderer)
     }
 
 }
