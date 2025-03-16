@@ -135,29 +135,33 @@ class Sprite {
     }
 
     func isColliding(with sprite: Sprite) -> Bool {
-        // Calculate the bounds of both sprites
-        // Convert corners of both sprites to world space using their model matrices
+
+        // sclaing down for better expirence in game
+        let scale: Float = 0.95
+        let scaleMat = mat4.scale(sx: scale, sy: scale, sz: 1.0)
+        let model1 = self.model * scaleMat
+        let model2 = sprite.model * scaleMat
+        
         let corners1 = [
-            model * vec4(0, 0, 0, 1),
-            model * vec4(1, 0, 0, 1),
-            model * vec4(0, 1, 0, 1),
-            model * vec4(1, 1, 0, 1)
+            model1 * vec4(0, 0, 0, 1),
+            model1 * vec4(1, 0, 0, 1),
+            model1 * vec4(0, 1, 0, 1),
+            model1 * vec4(1, 1, 0, 1)
         ].map { vec2($0.x, $0.y) }
 
         let corners2 = [
-            sprite.model * vec4(0, 0, 0, 1),
-            sprite.model * vec4(1, 0, 0, 1),
-            sprite.model * vec4(0, 1, 0, 1),
-            sprite.model * vec4(1, 1, 0, 1)
+            model2 * vec4(0, 0, 0, 1),
+            model2 * vec4(1, 0, 0, 1),
+            model2 * vec4(0, 1, 0, 1),
+            model2 * vec4(1, 1, 0, 1)
         ].map { vec2($0.x, $0.y) }
-
-        // Check for separating axis using SAT (Separating Axis Theorem)
+        
+        // Check for separating axis using SAT
         // not sure if I fully understand this
         for shape in [corners1, corners2] {
             for i in 0..<shape.count {
                 let edge = shape[(i + 1) % shape.count] - shape[i]
                 let axis = vec2(-edge.y, edge.x).normalized
-                
                 
                 let proj1 = corners1.map { axis.dot($0) }
                 let proj2 = corners2.map { axis.dot($0) }
@@ -172,9 +176,7 @@ class Sprite {
                 }
             }
         }
-
         return true
-        
     }
 
     func isColliding(with sprite: Sprite, at x: Int, y: Int) -> Bool {
