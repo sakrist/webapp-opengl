@@ -5,8 +5,8 @@ One is coming from WASI and another one is from Embedded + emscripten SDK.
 ## Build
 
 To build this project you need:
-- [Swift 6.1 Development Snapshot](https://www.swift.org/download/)
-- [SwiftWasm Toolchain](https://book.swiftwasm.org/getting-started/setup.html)  
+- [Swift 6.1 release](https://www.swift.org/download/)
+- [SwiftWasm SDK](https://book.swiftwasm.org/getting-started/setup.html#installation---latest-release-swift-61)  
 - [Emscripten SDK](https://emscripten.org/docs/getting_started/downloads.html)
 
 >[!IMPORTANT]

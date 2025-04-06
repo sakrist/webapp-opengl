@@ -6,6 +6,21 @@ if [ ! -z "$DEBUG" ]; then
   BUILD_TYPE=debug
 fi
 
+export TOOLCHAIN_NAME=swift-6.1-RELEASE.xctoolchain
+export SWIFT_TOOLCHAIN=/Library/Developer/Toolchains/$TOOLCHAIN_NAME
+
+# find toolchain in /Library/Developer/Toolchains or ~/Library/Developer/Toolchains
+if [ ! -d "$SWIFT_TOOLCHAIN" ]; then
+  if [ ! -d "$HOME/Library/Developer/Toolchains/$TOOLCHAIN_NAME" ]; then
+    echo "❌ Toolchain not found"
+    exit 1
+  else
+    SWIFT_TOOLCHAIN="$HOME/Library/Developer/Toolchains/$TOOLCHAIN_NAME"
+  fi
+fi
+
+
+
 format_size_kb() {
   local size_bytes=$1
   printf "%.2f" $(bc <<< "scale=2; $size_bytes/1024")
@@ -36,9 +51,7 @@ prepare_bundle() {
 }
 
 build_wasi() {
-  SWIFTWASM_SDK=6.0.3-RELEASE-wasm32-unknown-wasi
-  export TOOLCHAIN_NAME=swift-wasm-6.0.3-RELEASE.xctoolchain
-  export SWIFT_TOOLCHAIN=/Library/Developer/Toolchains/$TOOLCHAIN_NAME
+  SWIFTWASM_SDK=6.1-RELEASE-wasm32-unknown-wasi
 
   $SWIFT_TOOLCHAIN/usr/bin/swift build -c $BUILD_TYPE --product App \
   --swift-sdk $SWIFTWASM_SDK \
@@ -60,9 +73,7 @@ build_embedded_emsdk() {
     exit 1
   fi
 
-  export TOOLCHAIN_NAME=swift-6.1-DEVELOPMENT-SNAPSHOT-2025-03-12-a.xctoolchain
   export EMSDK_SYSROOT=$EMSDK/upstream/emscripten/cache/sysroot
-  export SWIFT_TOOLCHAIN=/Library/Developer/Toolchains/$TOOLCHAIN_NAME
   export JAVASCRIPTKIT_EXPERIMENTAL_EMBEDDED_WASM=true 
 
   $SWIFT_TOOLCHAIN/usr/bin/swift build -c $BUILD_TYPE --product App \
